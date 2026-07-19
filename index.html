@@ -781,10 +781,11 @@
             } catch (e) {}
         }
 
-        // RULE 1: Strict paths for public data
-        const getOndanaDocRef = () => doc(db, 'artifacts', appId, 'public', 'data', 'profile-content');
+        // Firestore 경로는 짝수(4개) 세그먼트 주소로 설정해야 에러가 해결됩니다!
+        // artifacts (1) / marihee-profile-app (2) / public (3) / profile-content (4)
+        const getOndanaDocRef = () => doc(db, 'artifacts', appId, 'public', 'profile-content');
 
-        // RULE 3: Authentication logic prioritizes token before execution
+        // Authentication logic prioritizes token before execution
         async function authenticate() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
