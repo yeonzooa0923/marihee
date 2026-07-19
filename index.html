@@ -172,7 +172,7 @@
                         <div>
                             <div class="flex items-center justify-center sm:justify-start gap-1.5 mb-2">
                                 <span class="bg-[#142115] text-brand border border-brand-forest/40 dark:border-brand px-3 py-0.5 rounded-md text-xs font-bold tracking-tight"><i class="fa-solid fa-microphone"></i> 버츄얼 스트리머</span>
-                                <span class="bg-brand text-white px-3 py-0.5 rounded-md text-xs font-bold tracking-tight"><i class="fa-solid fa-heart"></i> 플랜비 연습생 3기</span>
+                                <span class="bg-[#142115] text-brand border border-brand-forest/40 dark:border-brand px-3 py-0.5 rounded-md text-xs font-bold tracking-tight"><i class="fa-solid fa-star"></i> 플랜비 연습생 3기</span>
                             </div>
                             <h1 class="text-3xl sm:text-4xl font-logo font-black text-brand-dark dark:text-white mb-2.5 flex items-baseline justify-center sm:justify-start gap-2">
                                 마리히
@@ -688,15 +688,15 @@
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration (마리히 전 전용 데이터베이스 연동용)
+        // Firebase Configuration (연동용 정밀 설정 정보)
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'marihee-profile-app';
         const firebaseConfig = {
-            apiKey: "AIzaSyD_pxh2yQKzrJGM5rEoFQyms0_s4AAJjw8",
-            authDomain: "dope-profile-db.firebaseapp.com",
-            projectId: "dope-profile-db",
-            storageBucket: "dope-profile-db.firebasestorage.app",
-            messagingSenderId: "666470131431",
-            appId: "1:666470131431:web:577cd240c4df25cfd92442"
+            apiKey: "AIzaSyDExlglINiKzysuOm3WF-pHaG4Oaw5nETs",
+            authDomain: "marihee-profile-db.firebaseapp.com",
+            projectId: "marihee-profile-db",
+            storageBucket: "marihee-profile-db.firebasestorage.app",
+            messagingSenderId: "437549437787",
+            appId: "1:437549437787:web:b68823a7e1648f1765407e"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -781,8 +781,10 @@
             } catch (e) {}
         }
 
-        const getOndanaDocRef = () => doc(db, 'artifacts', appId, 'public', 'profile-content');
+        // RULE 1: Strict paths for public data
+        const getOndanaDocRef = () => doc(db, 'artifacts', appId, 'public', 'data', 'profile-content');
 
+        // RULE 3: Authentication logic prioritizes token before execution
         async function authenticate() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -1630,7 +1632,6 @@
             });
         }
 
-        // Window interface binders for HTML mapping
         function closeProfileEditModal() { 
             const modal = document.getElementById('profile-edit-modal'); 
             modal.classList.add('opacity-0', 'pointer-events-none'); 
