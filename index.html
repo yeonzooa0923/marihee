@@ -6,7 +6,7 @@
     <title>마리히 프로필 🥕💛</title>
     
     <!-- 브라우저 탭 아이콘 (파비콘) - 마리히님의 공식 SOOP 프로필 이미지 연동 -->
-    <link rel="icon" href="https://stimg.afreecatv.com/LOGO/ma/marihema/marihema.jpg" type="image/jpeg">
+    <link id="favicon-link" class="rounded-full" rel="icon" href="https://stimg.afreecatv.com/LOGO/ma/marihema/marihema.jpg" type="image/jpeg">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -152,7 +152,7 @@
             <div class="bg-white dark:bg-brand-dark border-4 border-brand-dark dark:border-brand/60 rounded-3xl shadow-[8px_8px_0px_0px_rgba(46,125,50,0.3)] dark:shadow-[8px_8px_0px_0px_rgba(20,33,21,1)] overflow-hidden transition-all duration-300">
                 <!-- Cover Banner with Yellow and Green Gradation -->
                 <div class="h-36 sm:h-52 w-full relative overflow-hidden bg-gradient-to-r from-brand-dark via-brand to-accent">
-                    <img id="profile-banner-img" src="https://cdn.discordapp.com/attachments/1528283029338980383/1528287169024753805/MARIHEE_2.png?ex=6a5dbfd7&is=6a5c6e57&hm=33d75ce8f9edb03aecac046895d656d9059023c42c24f9f3e5562db362666527&" 
+                    <img id="profile-banner-img" src="" 
                          onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop'" 
                          class="w-full h-full object-cover absolute inset-0 opacity-85" alt="마리히 배너">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
@@ -161,7 +161,7 @@
                 <div class="px-6 sm:px-8 pb-6 flex flex-col sm:flex-row relative">
                     <!-- Avatar Area -->
                     <div class="-mt-20 sm:-mt-24 mb-4 sm:mb-0 sm:mr-6 flex-shrink-0 flex justify-center sm:block relative z-10">
-                        <img class="h-32 w-32 sm:h-40 sm:w-40 rounded-full border-4 border-[#1e2a1e] dark:border-brand shadow-lg object-cover bg-brand-light dark:bg-black/80 hover:scale-105 transition-transform duration-300" 
+                        <img id="avatar-display" class="h-32 w-32 sm:h-40 sm:w-40 rounded-full border-4 border-[#1e2a1e] dark:border-brand shadow-lg object-cover bg-brand-light dark:bg-black/80 hover:scale-105 transition-transform duration-300" 
                              src="https://stimg.afreecatv.com/LOGO/ma/marihema/marihema.jpg" 
                              onerror="this.src='https://placehold.co/400x400/ffd32a/142115?text=🐴+Marihee'" 
                              alt="마리히 아바타">
@@ -411,7 +411,7 @@
                     </div>
                 </div>
 
-                <!-- Song List Container -->
+                <!-- Song List Table -->
                 <div class="overflow-x-auto border-2 border-brand-dark dark:border-brand/40 rounded-2xl">
                     <table class="min-w-full divide-y-2 divide-brand-dark dark:divide-brand/40 text-left text-sm font-semibold">
                         <thead class="bg-brand-light dark:bg-black/60 text-xs text-brand-dark dark:text-emerald-300 font-black uppercase tracking-wider">
@@ -573,11 +573,25 @@
                 </div>
                 
                 <div class="p-5 flex-grow overflow-y-auto space-y-6 text-xs font-bold">
-                    <!-- Banner Cover Setting -->
+                    <!-- Banner Cover Setting with Drag-and-drop Image Area -->
                     <div>
-                        <h4 class="text-sm text-brand-dark dark:text-white mb-2"><i class="fa-regular fa-image text-brand mr-1"></i> 대표 아트 배너</h4>
-                        <label class="block text-gray-400 dark:text-emerald-350 mb-1.5">상단 커버 URL 이미지</label>
-                        <input type="text" id="edit-profile-banner" class="w-full bg-brand-light/30 dark:bg-black/30 border-2 border-brand-dark dark:border-brand text-gray-950 dark:text-emerald-100 rounded-xl focus:ring-1 focus:ring-brand p-3 outline-none" placeholder="이미지 주소를 복사해 넣어주세요">
+                        <h4 class="text-sm text-brand-dark dark:text-white mb-2"><i class="fa-regular fa-image text-brand mr-1"></i> 대표 아트 배너 설정</h4>
+                        <label class="block text-gray-400 dark:text-emerald-350 mb-1.5">배너 이미지 직접 파일 업로드 (고해상도 최적 변환 자동 적용)</label>
+                        <div id="banner-dropzone" class="border-2 border-dashed border-brand bg-brand-light/20 dark:bg-black/30 rounded-2xl p-4 text-center cursor-pointer hover:bg-brand-light/35 hover:border-brand-dark transition-all relative flex flex-col items-center justify-center min-h-[120px]">
+                            <input type="file" id="edit-profile-banner-file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
+                            <div id="banner-upload-prompt" class="space-y-1">
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl text-brand animate-bounce"></i>
+                                <p class="text-sm text-brand-dark dark:text-emerald-100 font-black">여기로 파일 이미지 드래그 앤 드롭 또는 클릭하세요.</p>
+                                <p class="text-[10px] text-gray-450 dark:text-gray-450">JPEG, PNG, WEBP 지원 (모바일/PC 완벽 선명도 최적화)</p>
+                            </div>
+                            <div id="banner-upload-preview" class="hidden w-full flex-col items-center gap-2">
+                                <img id="banner-preview-img" src="" class="h-24 w-auto rounded-lg object-cover border-2 border-brand-dark shadow-xs bg-white">
+                                <button type="button" onclick="clearUploadedBanner()" class="text-xs bg-red-100 text-red-600 dark:bg-red-950/20 dark:text-red-400 px-2.5 py-1 rounded-lg hover:bg-red-200 transition-colors font-bold">
+                                    <i class="fa-solid fa-trash mr-1"></i> 이미지 초기화
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="edit-profile-banner">
                     </div>
                     <hr class="border-brand/10 dark:border-brand/25">
 
@@ -766,6 +780,9 @@
         let deleteConfirmState = false; 
         let currentSelectedGenre = '전체';
 
+        // 이미지 파일 직접 가공용 Base64 최적화 인코더
+        let uploadedBannerBase64 = null;
+
         // Local Storage Utilities
         function safeGetStorage(key, defaultValue) {
             try { 
@@ -781,11 +798,44 @@
             } catch (e) {}
         }
 
-        // Firestore 경로는 짝수(4개) 세그먼트 주소로 설정해야 에러가 해결됩니다!
-        // artifacts (1) / marihee-profile-app (2) / public (3) / profile-content (4)
         const getOndanaDocRef = () => doc(db, 'artifacts', appId, 'public', 'profile-content');
 
-        // Authentication logic prioritizes token before execution
+        // 64비트 최적화 이미지 가공 시스템
+        function processHighResolutionImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const maxDim = 1200; // 최적의 가로 한도 설정
+                        if (width > maxDim || height > maxDim) {
+                            if (width > height) {
+                                height = Math.round((height * maxDim) / width);
+                                width = maxDim;
+                            } else {
+                                width = Math.round((width * maxDim) / height);
+                                height = maxDim;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', 0.82));
+                    };
+                    img.onerror = reject;
+                };
+                reader.onerror = reject;
+            });
+        }
+
         async function authenticate() {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -937,7 +987,74 @@
             renderNotice();
             renderSchedule();
             renderSongList();
+
+            // 배너 탐색 및 드롭존 이벤트 연결
+            initBannerUploadEvents();
         });
+
+        function initBannerUploadEvents() {
+            const dropzone = document.getElementById('banner-dropzone');
+            const fileInput = document.getElementById('edit-profile-banner-file');
+            if (!dropzone || !fileInput) return;
+
+            fileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) await handleBannerFile(file);
+            });
+
+            ['dragenter', 'dragover'].forEach(name => {
+                dropzone.addEventListener(name, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('border-brand', 'bg-brand-light/40', 'dark:bg-[#1a2b1c]');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(name => {
+                dropzone.addEventListener(name, (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('border-brand', 'bg-brand-light/40', 'dark:bg-[#1a2b1c]');
+                });
+            });
+
+            dropzone.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    await handleBannerFile(file);
+                }
+            });
+        }
+
+        async function handleBannerFile(file) {
+            const prompt = document.getElementById('banner-upload-prompt');
+            const preview = document.getElementById('banner-upload-preview');
+            const previewImg = document.getElementById('banner-preview-img');
+            if (!prompt || !preview || !previewImg) return;
+
+            try {
+                const optimized = await processHighResolutionImage(file);
+                uploadedBannerBase64 = optimized;
+                previewImg.src = optimized;
+                prompt.classList.add('hidden');
+                preview.classList.remove('hidden');
+                showToast("직접 이미지 배너 파일이 로드되었습니다! 🥕");
+            } catch (error) {
+                console.error(error);
+                showToast("이미지 규격 정밀 보정 과정 중 에러가 발생했습니다.");
+            }
+        }
+
+        function clearUploadedBanner() {
+            uploadedBannerBase64 = null;
+            const fileInput = document.getElementById('edit-profile-banner-file');
+            if (fileInput) fileInput.value = '';
+            const prompt = document.getElementById('banner-upload-prompt');
+            const preview = document.getElementById('banner-upload-preview');
+            if (prompt && preview) {
+                prompt.classList.remove('hidden');
+                preview.classList.add('hidden');
+            }
+        }
 
         // Background glitter hearts and stars for Marihee's green & yellow theme
         function generateBgGlitter() {
@@ -981,6 +1098,22 @@
             return text.replace(urlPattern, function(url) {
                 return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-brand dark:text-emerald-300 hover:underline font-bold inline-flex items-center gap-1 bg-brand-light dark:bg-emerald-950/30 px-2 py-0.5 rounded-lg transition-all text-xs" onclick="event.stopPropagation();">링크 <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i></a>`;
             });
+        }
+
+        // SOOP 방송국 URL에서 아이디 파싱하기
+        function getSoopId(url) {
+            if (!url) return 'marihema';
+            try {
+                const cleaned = url.trim();
+                const parts = cleaned.split('/');
+                let lastPart = parts[parts.length - 1];
+                if (!lastPart && parts.length > 1) {
+                    lastPart = parts[parts.length - 2];
+                }
+                return lastPart || 'marihema';
+            } catch (e) {
+                return 'marihema';
+            }
         }
 
         function calculateDDayString(type, dateStr) {
@@ -1111,6 +1244,18 @@
             if (dislikesContainer) {
                 dislikesContainer.innerHTML = (globalProfileData.dislikes || []).map(dislike => `<span class="px-3 py-1 bg-brand-dark/95 dark:bg-black text-gray-300 rounded-lg text-xs font-black border border-brand-dark">${dislike.trim()}</span>`).join('');
             }
+
+            const soopId = getSoopId(socials.soop);
+            const dynamicAvatarUrl = `https://stimg.afreecatv.com/LOGO/${soopId.substring(0, 2)}/${soopId}/${soopId}.jpg`;
+            
+            const avatarDisplay = document.getElementById('avatar-display');
+            if (avatarDisplay) {
+                avatarDisplay.src = dynamicAvatarUrl;
+            }
+            const faviconLink = document.getElementById('favicon-link');
+            if (faviconLink) {
+                faviconLink.href = dynamicAvatarUrl;
+            }
         }
 
         function renderNotice() {
@@ -1179,15 +1324,16 @@
             });
         }
 
+        // SOOP 아이디 소유 여부 검증 및 이모지 대응
         function getAvatarUrl(user) {
-            if (user.id && user.id.trim() !== '') {
+            if (user.id && user.id.trim() !== '' && !user.id.startsWith('marihee_fan_')) {
                 const prefix = user.id.substring(0, 2);
                 return `https://stimg.afreecatv.com/LOGO/${prefix}/${user.id}/${user.id}.jpg`;
             }
-            const safeName = user.nickname.length >= 2 ? user.nickname.substring(0,2) : user.nickname;
-            return `https://placehold.co/100x100/ffd32a/142115?text=${encodeURIComponent(safeName)}`;
+            return ''; // 프로필이 없음을 명시적으로 표기하여 이모지 🐴 렌더링을 유도
         }
 
+        // 🐴 말 이모지 프로필 출력 이중 설계
         function renderUpbo(data) {
             const grid = document.getElementById('upbo-grid');
             if (!grid) return;
@@ -1196,6 +1342,7 @@
 
             data.forEach(user => {
                 const totalItems = (user.items || []).reduce((sum, item) => sum + item.count, 0);
+                if (totalItems === 0 && !isAdminMode) return;
                 
                 const avatarUrl = getAvatarUrl(user);
                 const card = document.createElement('div');
@@ -1203,9 +1350,16 @@
                 card.onclick = () => { if (isAdminMode) openUpboEditModal(user, avatarUrl); else openUpboModal(user, avatarUrl); };
                 const adminBadge = isAdminMode ? `<div class="absolute top-2 right-2 text-brand"><i class="fa-solid fa-pen-to-square text-xs"></i></div>` : '';
 
+                let avatarHtml = '';
+                if (avatarUrl) {
+                    avatarHtml = `<img src="${avatarUrl}" onerror="this.onerror=null; this.outerHTML='<div class=\\'w-14 h-14 rounded-full bg-accent/20 dark:bg-emerald-950/40 border-2 border-brand-dark dark:border-brand flex items-center justify-center text-2xl mb-2.5 shadow-xs bg-white\\'>🐴</div>\\';" alt="${user.nickname}" class="w-14 h-14 rounded-full object-cover mb-2.5 border-2 border-brand-dark bg-white">`;
+                } else {
+                    avatarHtml = `<div class="w-14 h-14 rounded-full bg-accent/20 dark:bg-emerald-950/40 border-2 border-brand-dark dark:border-brand flex items-center justify-center text-2xl mb-2.5 shadow-xs bg-white">🐴</div>`;
+                }
+
                 card.innerHTML = `
                     ${adminBadge}
-                    <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/ffd32a/142115?text=${encodeURIComponent(user.nickname.substring(0,2))}'" alt="${user.nickname}" class="w-14 h-14 rounded-full object-cover mb-2.5 border-2 border-brand-dark bg-white">
+                    ${avatarHtml}
                     <div class="text-brand-dark dark:text-emerald-100 font-black text-sm mb-2 truncate w-full text-center">${user.nickname}</div>
                     <div class="bg-brand text-white text-[10px] font-black px-2 py-0.5 rounded-lg">숙제 ${totalItems}개</div>
                 `;
@@ -1213,6 +1367,7 @@
             });
         }
 
+        // 업보 모달 내 이모지 🐴 대응
         function openUpboModal(user, avatarUrl) {
             let modal = document.getElementById('upbo-modal');
             if (!modal) {
@@ -1226,11 +1381,18 @@
                 </div>
             `).join('') : `<div class="text-center text-gray-400 py-6 font-bold text-xs">남아있는 방셀 숙제가 없습니다! 프리패스 ✨</div>`;
 
+            let headerAvatarHtml = '';
+            if (avatarUrl) {
+                headerAvatarHtml = `<img src="${avatarUrl}" onerror="this.onerror=null; this.outerHTML='<div class=\\'w-10 h-10 rounded-full bg-accent/20 dark:bg-emerald-950/40 border border-brand-dark flex items-center justify-center text-xl shadow-xs bg-white\\'>🐴</div>\\';" class="w-10 h-10 rounded-full border border-brand-dark object-cover bg-white">`;
+            } else {
+                headerAvatarHtml = `<div class="w-10 h-10 rounded-full bg-accent/20 dark:bg-emerald-950/40 border border-brand-dark flex items-center justify-center text-xl shadow-xs bg-white">🐴</div>`;
+            }
+
             modal.innerHTML = `
                 <div class="bg-white dark:bg-brand-cardBg rounded-3xl shadow-2xl w-11/12 max-w-sm overflow-hidden transform scale-95 transition-transform duration-300 border-4 border-brand-dark dark:border-brand">
                     <div class="p-4 flex items-center justify-between border-b-2 border-brand-dark dark:border-brand bg-brand-light dark:bg-black">
                         <div class="flex items-center gap-2.5">
-                            <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/ffd32a/142115?text=${user.nickname.substring(0,2)}'" class="w-10 h-10 rounded-full border border-brand-dark object-cover bg-white">
+                            ${headerAvatarHtml}
                             <div>
                                 <div class="text-brand-dark dark:text-white font-black text-sm">${user.nickname}</div>
                                 <div class="text-gray-400 text-[9px] font-bold">(${user.id || '아이디 없음'})</div>
@@ -1374,8 +1536,15 @@
             currentEditingUserId = user.id; 
             const modal = document.getElementById('upbo-edit-modal');
             
+            let editHeaderAvatarHtml = '';
+            if (avatarUrl) {
+                editHeaderAvatarHtml = `<img src="${avatarUrl}" onerror="this.onerror=null; this.outerHTML='<div class=\\'w-10 h-10 rounded-full bg-accent/20 dark:bg-emerald-950/40 border border-brand-dark flex items-center justify-center text-xl shadow-xs bg-white\\'>🐴</div>\\';" class="w-10 h-10 rounded-full border border-brand-dark object-cover bg-white">`;
+            } else {
+                editHeaderAvatarHtml = `<div class="w-10 h-10 rounded-full bg-accent/20 dark:bg-emerald-950/40 border border-brand-dark flex items-center justify-center text-xl shadow-xs bg-white">🐴</div>`;
+            }
+
             document.getElementById('edit-modal-header').innerHTML = `
-                <img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/ffd32a/142115?text=${user.nickname.substring(0,2)}'" class="w-10 h-10 rounded-full border border-brand-dark object-cover bg-white">
+                ${editHeaderAvatarHtml}
                 <div>
                     <div class="text-brand-dark dark:text-white font-black text-sm">
                         ${user.nickname} 
@@ -1603,7 +1772,9 @@
         function openProfileEditModal() {
             const modal = document.getElementById('profile-edit-modal');
             
-            document.getElementById('edit-profile-banner').value = globalProfileData.bannerUrl || defaultProfileData.bannerUrl || '';
+            clearUploadedBanner();
+
+            document.getElementById('edit-profile-banner').value = globalProfileData.bannerUrl || '';
             document.getElementById('edit-profile-intro').value = globalProfileData.introText || ''; 
             document.getElementById('edit-profile-tags').value = (globalProfileData.tags || []).join(', ');
             
@@ -1625,6 +1796,19 @@
             }
 
             renderEditDdays();
+
+            // 기존 파일 배너 이미지 업로드 탐색 박스 복원 매핑
+            const bannerUrl = globalProfileData.bannerUrl || "";
+            if (bannerUrl && (bannerUrl.startsWith('data:image') || bannerUrl.startsWith('http'))) {
+                const prompt = document.getElementById('banner-upload-prompt');
+                const preview = document.getElementById('banner-upload-preview');
+                const previewImg = document.getElementById('banner-preview-img');
+                if (previewImg && preview && prompt) {
+                    previewImg.src = bannerUrl;
+                    prompt.classList.add('hidden');
+                    preview.classList.remove('hidden');
+                }
+            }
 
             requestAnimationFrame(() => { 
                 modal.classList.remove('opacity-0', 'pointer-events-none'); 
@@ -1677,7 +1861,16 @@
         function saveProfileChanges() {
             const parse = (str) => str.split(',').map(item => item.trim()).filter(item => item !== '');
             
-            globalProfileData.bannerUrl = document.getElementById('edit-profile-banner').value.trim();
+            // 배너 직접 업로드 이미지 및 텍스트 분기 처리
+            if (uploadedBannerBase64) {
+                globalProfileData.bannerUrl = uploadedBannerBase64;
+            } else {
+                const manualTextBanner = document.getElementById('edit-profile-banner').value.trim();
+                if (manualTextBanner) {
+                    globalProfileData.bannerUrl = manualTextBanner;
+                }
+            }
+
             globalProfileData.introText = document.getElementById('edit-profile-intro').value; 
             globalProfileData.tags = parse(document.getElementById('edit-profile-tags').value);
             
@@ -1757,6 +1950,7 @@
         window.closeAddSongModal = closeAddSongModal;
         window.submitNewSong = submitNewSong;
         window.deleteSong = deleteSong;
+        window.clearUploadedBanner = clearUploadedBanner;
     </script>
 </body>
 </html>
