@@ -15,6 +15,11 @@
     <!-- Google Fonts: Fredoka (Y2K Round), Gowun Dodum, Noto Sans KR -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Gowun+Dodum&family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
+    <!-- Firebase SDK (Compat v10) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -163,7 +168,8 @@
                     <div class="-mt-20 sm:-mt-24 mb-4 sm:mb-0 sm:mr-6 flex-shrink-0 flex justify-center sm:block relative z-10">
                         <img id="avatar-display" class="h-32 w-32 sm:h-40 sm:w-40 rounded-full border-4 border-[#1e2a1e] dark:border-brand shadow-lg object-cover bg-brand-light dark:bg-black/80 hover:scale-105 transition-transform duration-300" 
                              src="https://stimg.afreecatv.com/LOGO/ma/marihema/marihema.jpg" 
-                             onerror="this.src='https://placehold.co/400x400/ffd32a/142115?text=🐴+Marihee'" 
+                             referrerpolicy="no-referrer"
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x400/ffd32a/142115?text=🐴+Marihee';" 
                              alt="마리히 아바타">
                     </div>
                     
@@ -340,7 +346,7 @@
                     <div>
                         <div class="text-brand font-black tracking-widest text-[11px] mb-1 flex items-center gap-1.5 uppercase font-logo">
                             <span>MARIHEE FANSIGN HOMEWORK STATUS</span>
-                            <button onclick="openAdminLoginModal()" class="text-brand-dark/20 dark:text-emerald-900 hover:text-brand transition-colors" title="관리인증">
+                            <button onclick="openAdminLoginModal()" class="text-brand-dark/20 dark:text-emerald-900 hover:text-brand transition-colors" title="관리자 인증">
                                 <i class="fa-solid fa-lock text-xs"></i>
                             </button>
                         </div>
@@ -431,15 +437,24 @@
             </div>
         </section>
 
-        <!-- Admin Access Modals -->
+        <!-- Admin Access Modals (Firebase Auth Email/Password Login) -->
         <div id="admin-login-modal" class="fixed inset-0 z-[110] flex items-center justify-center bg-black/70 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
             <div class="bg-white dark:bg-brand-cardBg rounded-3xl shadow-2xl w-11/12 max-w-sm p-6 transform scale-95 transition-transform duration-300 border-4 border-brand-dark dark:border-brand">
-                <h3 class="text-xl font-black text-brand-dark dark:text-white mb-2"><i class="fa-solid fa-key text-brand mr-1"></i> 마리히 비밀번호 입력</h3>
-                <p class="text-xs text-gray-500 dark:text-emerald-300 mb-4 font-bold">마리히 전용 인증 키를 입력해 주세요.</p>
-                <input type="password" id="admin-pin" class="w-full bg-[#fafdfb] dark:bg-black/40 border-2 border-brand-dark dark:border-brand text-gray-950 dark:text-emerald-100 rounded-xl focus:ring-1 focus:ring-brand p-3.5 mb-4 outline-none text-center tracking-widest font-black text-xl" placeholder="••••••••">
+                <h3 class="text-xl font-black text-brand-dark dark:text-white mb-2"><i class="fa-solid fa-lock text-brand mr-1"></i> 관리자 계정 인증</h3>
+                <p class="text-xs text-gray-500 dark:text-emerald-300 mb-4 font-bold">등록된 이메일과 비밀번호로 로그인해 주세요.</p>
+                <div class="space-y-3 mb-4 text-left font-bold text-xs">
+                    <div>
+                        <label class="block text-gray-500 mb-1">이메일</label>
+                        <input type="email" id="admin-email" class="w-full bg-[#fafdfb] dark:bg-black/40 border-2 border-brand-dark dark:border-brand text-gray-950 dark:text-emerald-100 rounded-xl p-3 outline-none" placeholder="admin@marihee.com">
+                    </div>
+                    <div>
+                        <label class="block text-gray-500 mb-1">비밀번호</label>
+                        <input type="password" id="admin-password" class="w-full bg-[#fafdfb] dark:bg-black/40 border-2 border-brand-dark dark:border-brand text-gray-950 dark:text-emerald-100 rounded-xl p-3 outline-none" placeholder="••••••••" onkeydown="if(event.key==='Enter') handleAdminLogin()">
+                    </div>
+                </div>
                 <div class="flex justify-end gap-2 text-xs font-black">
                     <button onclick="closeAdminLoginModal()" class="px-4 py-3 rounded-xl bg-gray-200 dark:bg-brand-dark text-gray-700 dark:text-emerald-200 hover:bg-gray-300 transition-colors">취소</button>
-                    <button onclick="checkAdminPin()" class="px-4 py-3 rounded-xl bg-brand text-white border-2 border-brand-dark shadow-[2px_2px_0px_0px_rgba(20,33,21,1)] hover:bg-brand-hover transition-colors">인증 완료</button>
+                    <button onclick="handleAdminLogin()" class="px-4 py-3 rounded-xl bg-brand text-white border-2 border-brand-dark shadow-[2px_2px_0px_0px_rgba(20,33,21,1)] hover:bg-brand-hover transition-colors">로그인</button>
                 </div>
             </div>
         </div>
@@ -608,7 +623,7 @@
                                 <input type="text" id="edit-profile-youtube" class="w-full bg-brand-light/30 dark:bg-black/30 border-2 border-brand-dark dark:border-brand text-gray-950 dark:text-emerald-100 rounded-xl focus:ring-1 focus:ring-brand p-2.5 outline-none">
                             </div>
                             <div>
-                                <label class="block text-gray-400 dark:text-emerald-350 mb-1">네이버 팬카페 링크</label>
+                                <label class="block text-gray-400 dark:text-emerald-350 mb-1">네이버 팬카페 링크 (없으면 준비중 또는 빈칸)</label>
                                 <input type="text" id="edit-profile-cafe" class="w-full bg-brand-light/30 dark:bg-black/30 border-2 border-brand-dark dark:border-brand text-gray-950 dark:text-emerald-100 rounded-xl focus:ring-1 focus:ring-brand p-2.5 outline-none">
                             </div>
                         </div>
@@ -696,14 +711,8 @@
         <span id="toast-text">카피 완료! ⭐</span>
     </div>
 
-    <!-- Core JS System: Data synchronization and interactive effects -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase Configuration (연동용 정밀 설정 정보)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'marihee-profile-app';
+    <script>
+        // 파이어베이스 데이터베이스 구성 (marihee-profile-db)
         const firebaseConfig = {
             apiKey: "AIzaSyDExlglINiKzysuOm3WF-pHaG4Oaw5nETs",
             authDomain: "marihee-profile-db.firebaseapp.com",
@@ -713,11 +722,64 @@
             appId: "1:437549437787:web:b68823a7e1648f1765407e"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+        let db = null;
+        let auth = null;
 
-        // 마리히님 전용 싱그럽고 뽀용한 디폴트 데이터 세트 설정
+        function initFirebase() {
+            if (typeof firebase !== 'undefined') {
+                if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
+                    try {
+                        if (firebase.apps.length === 0) {
+                            firebase.initializeApp(firebaseConfig);
+                        }
+                        db = firebase.firestore();
+                        auth = firebase.auth();
+
+                        auth.onAuthStateChanged((user) => {
+                            if (user) {
+                                isAdminMode = true;
+                                updateAdminUI(true);
+                            } else {
+                                isAdminMode = false;
+                                updateAdminUI(false);
+                            }
+                        });
+
+                        return true;
+                    } catch (error) {
+                        console.error("Firebase 초기화 에러:", error);
+                    }
+                }
+            } else {
+                console.warn("Firebase SDK 로딩 대기 중...");
+            }
+            return false;
+        }
+
+        function updateAdminUI(isLoggedIn) {
+            const addBtn = document.getElementById('admin-add-user-btn');
+            const songBtn = document.getElementById('admin-add-song-btn');
+            const noticeBtn = document.getElementById('admin-notice-edit-btn');
+            const scheduleBtn = document.getElementById('admin-schedule-edit-btn');
+            const profileBtn = document.getElementById('admin-profile-edit-btn');
+
+            if (isLoggedIn) {
+                if (addBtn) { addBtn.classList.remove('hidden'); addBtn.classList.add('flex'); }
+                if (songBtn) { songBtn.classList.remove('hidden'); songBtn.classList.add('flex'); }
+                if (noticeBtn) noticeBtn.classList.remove('hidden');
+                if (scheduleBtn) scheduleBtn.classList.remove('hidden');
+                if (profileBtn) profileBtn.classList.remove('hidden');
+            } else {
+                if (addBtn) { addBtn.classList.add('hidden'); addBtn.classList.remove('flex'); }
+                if (songBtn) { songBtn.classList.add('hidden'); songBtn.classList.remove('flex'); }
+                if (noticeBtn) noticeBtn.classList.add('hidden');
+                if (scheduleBtn) scheduleBtn.classList.add('hidden');
+                if (profileBtn) profileBtn.classList.add('hidden');
+            }
+            renderSongList();
+            renderUpbo(globalUpboData);
+        }
+
         const defaultUpboData = [
             { id: 'marihema', nickname: '마리히대장', items: [{ name: '자필 손편지 방셀', count: 2 }, { name: '애교 보이스 녹음', count: 1 }] },
             { id: 'marihee_fan_1', nickname: '당근맛쿠키', items: [{ name: '모닝콜 알람', count: 1 }] },
@@ -726,7 +788,7 @@
         
         const defaultNoticeData = [
             { type: '필독', date: '2026.07.19', content: '당그니들을 위한 마리히 주간 방송 일정과 방셀 정산 숙제 현황표 업데이트 완료! 🐴💛', typeColor: 'red', link: '' },
-            { type: '공지', date: '2026.07.15', content: '마리히 커버 신곡 영상이 유튜브 채널에 업로드 되었어요! 많은 관심 부탁드립니다 🍀', typeColor: 'blue', link: 'https://youtube.com/@marihee_myzoo' },
+            { type: '안내', date: '2026.07.15', content: '마리히 커버 신곡 영상이 유튜브 채널에 업로드 되었어요! 많은 관심 부탁드립니다 🍀', typeColor: 'blue', link: 'https://youtube.com/@marihee_myzoo' },
             { type: '일상', date: '2026.07.01', content: '오늘도 방송 봐주신 소중한 당그니들 모두 감사해요! 평생 사랑해! 💛', typeColor: 'gray', link: '' }
         ];
 
@@ -741,7 +803,7 @@
         ];
         
         const defaultProfileData = {
-            bannerUrl: "https://cdn.discordapp.com/attachments/1528283029338980383/1528287169024753805/MARIHEE_2.png?ex=6a5dbfd7&is=6a5c6e57&hm=33d75ce8f9edb03aecac046895d656d9059023c42c24f9f3e5562db362666527&",
+            bannerUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop",
             introText: "안녕하세요! 싱그러운 초록빛 기운과 따뜻한 노란 당근의 마음을 담아 노래하는 마리히입니다 🐴💛\n언제나 다정한 오디오와 맑은 목소리로 당그니들에게 특별한 행복을 가득 채워드릴게요!\n다채로운 힐링 수다, 상큼한 노래책으로 채워진 저의 마이주 공간에 오신 것을 환영합니다! 🍀",
             tags: ["플랜비", "연습생3기", "당그니", "버츄얼스트리머", "노랑초록"],
             broadcast: { time: "매일 밤 9시 방송 온에어 (매주 수요일 정기 충전 휴방!)", content: "맑은 가창 소통 · 따뜻 오디오 수다 · 당그니들과의 추억 소통", game: "힐링 마인크래프트 · 귀여운 퍼즐 게임 · 스토리 육성" },
@@ -768,7 +830,7 @@
             { title: "아이와 (Aiwa)", artist: "마리히", genre: "댄스/신나는곡" },
             { title: "Raindrop", artist: "아이유", genre: "발라드/어쿠스틱" }
         ];
-        
+
         let globalUpboData = [];
         let globalNoticeData = [];
         let globalScheduleData = [];
@@ -779,11 +841,8 @@
         let currentEditingUserId = null;
         let deleteConfirmState = false; 
         let currentSelectedGenre = '전체';
-
-        // 이미지 파일 직접 가공용 Base64 최적화 인코더
         let uploadedBannerBase64 = null;
 
-        // Local Storage Utilities
         function safeGetStorage(key, defaultValue) {
             try { 
                 const item = window.localStorage.getItem(key); 
@@ -798,9 +857,6 @@
             } catch (e) {}
         }
 
-        const getOndanaDocRef = () => doc(db, 'artifacts', appId, 'public', 'profile-content');
-
-        // 64비트 최적화 이미지 가공 시스템
         function processHighResolutionImage(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -812,7 +868,7 @@
                         const canvas = document.createElement('canvas');
                         let width = img.width;
                         let height = img.height;
-                        const maxDim = 1200; // 최적의 가로 한도 설정
+                        const maxDim = 1200;
                         if (width > maxDim || height > maxDim) {
                             if (width > height) {
                                 height = Math.round((height * maxDim) / width);
@@ -836,67 +892,57 @@
             });
         }
 
-        async function authenticate() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                return true;
-            } catch (error) {
-                console.warn("Auth deferred:", error.message);
-                return false;
-            }
-        }
-
         async function fetchSiteData() {
             const loadingInd = document.getElementById('loading-indicator');
-            if (loadingInd) loadingInd.classList.remove('hidden');
+            if (!db) {
+                initFirebase();
+            }
 
-            const isAuthed = await authenticate();
-            
-            if (isAuthed && navigator.onLine) {
+            if (db) {
+                if (loadingInd) loadingInd.classList.remove('hidden');
                 try {
-                    const docRef = getOndanaDocRef();
-                    const docSnap = await getDoc(docRef);
-                    
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
+                    const docRef = db.collection('mariheeProfile').doc('siteData');
+                    const doc = await docRef.get();
+                    if (doc.exists) {
+                        const data = doc.data();
                         globalUpboData = data.upbo || defaultUpboData;
                         globalNoticeData = data.notice || defaultNoticeData;
                         globalScheduleData = data.schedule || defaultScheduleData;
                         globalProfileData = data.profile || defaultProfileData;
                         globalSongsData = data.songs || defaultSongsData;
-
-                        safeSetStorage('mariheeUpboData', globalUpboData);
-                        safeSetStorage('mariheeNoticeData', globalNoticeData);
-                        safeSetStorage('mariheeScheduleData', globalScheduleData);
-                        safeSetStorage('mariheeProfileData', globalProfileData);
-                        safeSetStorage('mariheeSongsData', globalSongsData);
+                        
+                        if (globalProfileData && (!globalProfileData.ddays || globalProfileData.ddays.length === 0)) {
+                            globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
+                        }
+                        if (globalProfileData && !globalProfileData.socials) {
+                            globalProfileData.socials = JSON.parse(JSON.stringify(defaultProfileData.socials));
+                        }
                     } else {
-                        const initialPayload = {
-                            upbo: defaultUpboData,
-                            notice: defaultNoticeData,
-                            schedule: defaultScheduleData,
-                            profile: defaultProfileData,
-                            songs: defaultSongsData
-                        };
-                        await setDoc(docRef, initialPayload);
-                        globalUpboData = defaultUpboData;
-                        globalNoticeData = defaultNoticeData;
-                        globalScheduleData = defaultScheduleData;
+                        if (auth && auth.currentUser) {
+                            try {
+                                await docRef.set({
+                                    upbo: defaultUpboData, 
+                                    notice: defaultNoticeData, 
+                                    schedule: defaultScheduleData, 
+                                    profile: defaultProfileData,
+                                    songs: defaultSongsData
+                                });
+                            } catch (e) { console.warn("초기 생성 권한 없음:", e); }
+                        }
+                        globalUpboData = defaultUpboData; 
+                        globalNoticeData = defaultNoticeData; 
+                        globalScheduleData = defaultScheduleData; 
                         globalProfileData = defaultProfileData;
                         globalSongsData = defaultSongsData;
                     }
                 } catch (error) {
-                    console.warn("Firestore error, falling back to local:", error.message);
+                    console.warn("Firestore 데이터 읽기 제한 또는 미설정. 로컬 데이터로 대체합니다:", error.message);
                     fallbackToLocal();
                 }
+                if (loadingInd) loadingInd.classList.add('hidden');
             } else {
                 fallbackToLocal();
             }
-            if (loadingInd) loadingInd.classList.add('hidden');
         }
 
         function fallbackToLocal() {
@@ -905,22 +951,26 @@
             globalScheduleData = safeGetStorage('mariheeScheduleData', defaultScheduleData);
             globalProfileData = safeGetStorage('mariheeProfileData', defaultProfileData);
             globalSongsData = safeGetStorage('mariheeSongsData', defaultSongsData);
+            
+            if (globalProfileData && (!globalProfileData.ddays || globalProfileData.ddays.length === 0)) {
+                globalProfileData.ddays = JSON.parse(JSON.stringify(defaultProfileData.ddays));
+            }
+            if (globalProfileData && !globalProfileData.socials) {
+                globalProfileData.socials = JSON.parse(JSON.stringify(defaultProfileData.socials));
+            }
         }
 
         async function updateFirestore(key, data) {
             safeSetStorage(`marihee${key.charAt(0).toUpperCase() + key.slice(1)}Data`, data);
-            
-            if (auth.currentUser && navigator.onLine) {
+            if (db && auth && auth.currentUser) {
                 try { 
-                    const docRef = getOndanaDocRef();
-                    await updateDoc(docRef, { [key]: data }); 
+                    await db.collection('mariheeProfile').doc('siteData').update({ [key]: data }); 
                 } catch (error) { 
-                    console.warn("Sync deferred:", error.message);
+                    console.error("데이터 저장 실패:", error); 
                 }
             }
         }
 
-        // Dark Mode Configuration & Event Triggers
         document.addEventListener('DOMContentLoaded', async () => {
             generateBgGlitter();
 
@@ -980,6 +1030,7 @@
                 });
             }
 
+            initFirebase();
             await fetchSiteData();
             
             renderProfile();
@@ -988,7 +1039,6 @@
             renderSchedule();
             renderSongList();
 
-            // 배너 탐색 및 드롭존 이벤트 연결
             initBannerUploadEvents();
         });
 
@@ -1040,7 +1090,7 @@
                 showToast("직접 이미지 배너 파일이 로드되었습니다! 🥕");
             } catch (error) {
                 console.error(error);
-                showToast("이미지 규격 정밀 보정 과정 중 에러가 발생했습니다.");
+                showToast("이미지 변환에 실패하였습니다.");
             }
         }
 
@@ -1056,7 +1106,6 @@
             }
         }
 
-        // Background glitter hearts and stars for Marihee's green & yellow theme
         function generateBgGlitter() {
             const container = document.getElementById('glitter-bg');
             if (!container) return;
@@ -1089,7 +1138,7 @@
             setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-            }, 2500);
+            }, 3000);
         }
 
         function linkify(text) {
@@ -1100,7 +1149,6 @@
             });
         }
 
-        // SOOP 방송국 URL에서 아이디 파싱하기
         function getSoopId(url) {
             if (!url) return 'marihema';
             try {
@@ -1175,7 +1223,6 @@
                 bannerImg.src = globalProfileData.bannerUrl || defaultProfileData.bannerUrl;
             }
 
-            // Update Social Links Dynamic Rendering
             const socials = globalProfileData.socials || defaultProfileData.socials || {};
             const soopLink = document.getElementById('profile-soop-link');
             if (soopLink) soopLink.href = socials.soop || 'https://www.sooplive.com/station/marihema';
@@ -1324,16 +1371,14 @@
             });
         }
 
-        // SOOP 아이디 소유 여부 검증 및 이모지 대응
         function getAvatarUrl(user) {
             if (user.id && user.id.trim() !== '' && !user.id.startsWith('marihee_fan_')) {
                 const prefix = user.id.substring(0, 2);
                 return `https://stimg.afreecatv.com/LOGO/${prefix}/${user.id}/${user.id}.jpg`;
             }
-            return ''; // 프로필이 없음을 명시적으로 표기하여 이모지 🐴 렌더링을 유도
+            return ''; 
         }
 
-        // 🐴 말 이모지 프로필 출력 이중 설계
         function renderUpbo(data) {
             const grid = document.getElementById('upbo-grid');
             if (!grid) return;
@@ -1367,7 +1412,6 @@
             });
         }
 
-        // 업보 모달 내 이모지 🐴 대응
         function openUpboModal(user, avatarUrl) {
             let modal = document.getElementById('upbo-modal');
             if (!modal) {
@@ -1489,47 +1533,61 @@
             renderSongList();
         }
 
-        // Admin Access and Password configuration (비밀번호: 010503)
         function openAdminLoginModal() {
-            if (isAdminMode) {
-                isAdminMode = false;
-                document.getElementById('admin-add-user-btn').classList.add('hidden'); document.getElementById('admin-add-user-btn').classList.remove('flex');
-                document.getElementById('admin-notice-edit-btn').classList.add('hidden'); document.getElementById('admin-schedule-edit-btn').classList.add('hidden'); document.getElementById('admin-profile-edit-btn').classList.add('hidden');
-                document.getElementById('admin-add-song-btn').classList.add('hidden'); document.getElementById('admin-add-song-btn').classList.remove('flex');
-                document.getElementById('upbo-search').dispatchEvent(new Event('input')); 
-                renderSongList();
-                showToast("로그아웃 되었습니다.");
+            if (isAdminMode && auth && auth.currentUser) {
+                if (confirm(`현재 [${auth.currentUser.email}] 계정으로 로그인되어 있습니다.\n로그아웃 하시겠습니까?`)) {
+                    auth.signOut().then(() => {
+                        showToast("로그아웃 되었습니다. 🥕");
+                    });
+                }
                 return;
             }
             const modal = document.getElementById('admin-login-modal');
-            requestAnimationFrame(() => { modal.classList.remove('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); });
-            document.getElementById('admin-pin').value = ''; document.getElementById('admin-pin').focus();
+            requestAnimationFrame(() => { 
+                modal.classList.remove('opacity-0', 'pointer-events-none'); 
+                modal.querySelector('div').classList.remove('scale-95'); 
+                modal.querySelector('div').classList.add('scale-100'); 
+            });
+            document.getElementById('admin-email').value = '';
+            document.getElementById('admin-password').value = '';
         }
 
         function closeAdminLoginModal() {
             const modal = document.getElementById('admin-login-modal');
-            modal.classList.add('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-100'); modal.querySelector('div').classList.add('scale-95');
+            modal.classList.add('opacity-0', 'pointer-events-none'); 
+            modal.querySelector('div').classList.remove('scale-100'); 
+            modal.querySelector('div').classList.add('scale-95');
         }
 
-        function checkAdminPin() {
-            const pin = document.getElementById('admin-pin').value;
-            // 지정 비밀번호: 010503 완벽하게 적용
-            if (pin === '010503') { 
-                isAdminMode = true; closeAdminLoginModal();
-                document.getElementById('admin-add-user-btn').classList.remove('hidden'); document.getElementById('admin-add-user-btn').classList.add('flex');
-                document.getElementById('admin-notice-edit-btn').classList.remove('hidden'); document.getElementById('admin-schedule-edit-btn').classList.remove('hidden'); document.getElementById('admin-profile-edit-btn').classList.remove('hidden');
-                document.getElementById('admin-add-song-btn').classList.remove('hidden'); document.getElementById('admin-add-song-btn').classList.add('flex');
-                document.getElementById('upbo-search').dispatchEvent(new Event('input'));
-                renderSongList();
+        async function handleAdminLogin() {
+            const email = document.getElementById('admin-email').value.trim();
+            const password = document.getElementById('admin-password').value;
+
+            if (!email || !password) {
+                showToast("이메일과 비밀번호를 모두 입력해주세요.");
+                return;
+            }
+
+            if (!auth) {
+                showToast("Firebase Auth 모듈이 초기화되지 않았습니다.");
+                return;
+            }
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                closeAdminLoginModal();
                 showToast("마리히님 환영합니다! 💛");
-            } else {
-                const input = document.getElementById('admin-pin');
-                input.classList.add('border-red-500'); input.value = ''; input.placeholder = '비밀번호 불일치!';
-                setTimeout(() => { input.classList.remove('border-red-500'); input.placeholder = '••••••••'; }, 1800);
+                document.getElementById('admin-password').value = '';
+            } catch (error) {
+                console.error("Login failed:", error);
+                let msg = '로그인에 실패했습니다.';
+                if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                    msg = '계정 정보가 올바르지 않습니다.';
+                }
+                showToast('❌ ' + msg);
             }
         }
 
-        // User & Item editing systems
         function saveUpboData() { updateFirestore('upbo', globalUpboData); }
 
         function openUpboEditModal(user, avatarUrl) {
@@ -1538,7 +1596,7 @@
             
             let editHeaderAvatarHtml = '';
             if (avatarUrl) {
-                editHeaderAvatarHtml = `<img src="${avatarUrl}" onerror="this.onerror=null; this.outerHTML='<div class=\\'w-10 h-10 rounded-full bg-accent/20 dark:bg-emerald-950/40 border border-brand-dark flex items-center justify-center text-xl shadow-xs bg-white\\'>🐴</div>\\';" class="w-10 h-10 rounded-full border border-brand-dark object-cover bg-white">`;
+                editHeaderAvatarHtml = `<img src="${avatarUrl}" onerror="this.src='https://placehold.co/100x100/2e7d32/ffffff?text=${user.nickname.substring(0,2)}'" class="w-10 h-10 rounded-full border border-brand-dark object-cover bg-white">`;
             } else {
                 editHeaderAvatarHtml = `<div class="w-10 h-10 rounded-full bg-accent/20 dark:bg-emerald-950/40 border border-brand-dark flex items-center justify-center text-xl shadow-xs bg-white">🐴</div>`;
             }
@@ -1560,7 +1618,7 @@
                 deleteUserBtn.classList.add('block');
                 deleteConfirmState = false; 
                 deleteUserBtn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>삭제`;
-                deleteUserBtn.className = "text-xs bg-red-100 text-red-600 font-bold px-2.5 py-1.5 rounded-lg border border-red-500 hover:bg-red-200 transition-all";
+                deleteUserBtn.className = "text-xs bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2.5 py-1.5 rounded-lg border border-red-500 hover:bg-red-200 transition-all";
                 deleteUserBtn.onclick = () => handleDeleteUser(user.id);
             }
 
@@ -1593,7 +1651,7 @@
                 setTimeout(() => {
                     if (deleteConfirmState && currentEditingUserId === userId) {
                         btn.innerHTML = `<i class="fa-solid fa-user-minus mr-1"></i>삭제`;
-                        btn.className = "text-xs bg-red-100 text-red-600 font-bold px-2.5 py-1.5 rounded-lg border border-red-500 hover:bg-red-200 transition-all";
+                        btn.className = "text-xs bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400 font-bold px-2.5 py-1.5 rounded-lg border border-red-500 hover:bg-red-200 transition-all";
                         deleteConfirmState = false;
                     }
                 }, 3000);
@@ -1659,7 +1717,6 @@
             saveUpboData(); closeAddUserModal(); document.getElementById('upbo-search').dispatchEvent(new Event('input'));
         }
 
-        // Notice configuration operations
         function openNoticeEditModal() {
             const modal = document.getElementById('notice-edit-modal'); renderNoticeEditList();
             requestAnimationFrame(() => { modal.classList.remove('opacity-0', 'pointer-events-none'); modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); });
@@ -1690,6 +1747,7 @@
                 `;
             });
         }
+
         function addNewNotice() {
             const type = document.getElementById('new-notice-type').value; 
             const contentInput = document.getElementById('new-notice-content'); 
@@ -1702,7 +1760,7 @@
             
             let typeColor = 'gray'; 
             if (type === '필독') typeColor = 'red'; 
-            if (type === '공지') typeColor = 'blue';
+            if (type === '안내') typeColor = 'blue';
             
             const today = new Date(); 
             const dateStr = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
@@ -1742,7 +1800,6 @@
             updateFirestore('schedule', globalScheduleData); renderSchedule(); closeScheduleEditModal();
         }
 
-        // Song edit controls
         function openAddSongModal() {
             const modal = document.getElementById('add-song-modal');
             document.getElementById('new-song-title').value = '';
@@ -1768,7 +1825,6 @@
             showToast(`노래책에 "${title}" 신곡을 등록했습니다! 🎵`);
         }
 
-        // Profile modification center
         function openProfileEditModal() {
             const modal = document.getElementById('profile-edit-modal');
             
@@ -1797,7 +1853,6 @@
 
             renderEditDdays();
 
-            // 기존 파일 배너 이미지 업로드 탐색 박스 복원 매핑
             const bannerUrl = globalProfileData.bannerUrl || "";
             if (bannerUrl && (bannerUrl.startsWith('data:image') || bannerUrl.startsWith('http'))) {
                 const prompt = document.getElementById('banner-upload-prompt');
@@ -1860,17 +1915,9 @@
 
         function saveProfileChanges() {
             const parse = (str) => str.split(',').map(item => item.trim()).filter(item => item !== '');
+            const bannerUrlVal = document.getElementById('edit-profile-banner').value.trim();
             
-            // 배너 직접 업로드 이미지 및 텍스트 분기 처리
-            if (uploadedBannerBase64) {
-                globalProfileData.bannerUrl = uploadedBannerBase64;
-            } else {
-                const manualTextBanner = document.getElementById('edit-profile-banner').value.trim();
-                if (manualTextBanner) {
-                    globalProfileData.bannerUrl = manualTextBanner;
-                }
-            }
-
+            globalProfileData.bannerUrl = uploadedBannerBase64 || bannerUrlVal || "";
             globalProfileData.introText = document.getElementById('edit-profile-intro').value; 
             globalProfileData.tags = parse(document.getElementById('edit-profile-tags').value);
             
@@ -1917,7 +1964,6 @@
             showToast(`"${deletedTitle}" 곡이 노래책 리스트에서 삭제되었습니다.`);
         }
 
-        // Window interface binders for HTML mapping
         window.openProfileEditModal = openProfileEditModal;
         window.closeProfileEditModal = closeProfileEditModal;
         window.saveProfileChanges = saveProfileChanges;
@@ -1927,7 +1973,7 @@
         window.closeUpboModal = closeUpboModal;
         window.openAdminLoginModal = openAdminLoginModal;
         window.closeAdminLoginModal = closeAdminLoginModal;
-        window.checkAdminPin = checkAdminPin;
+        window.handleAdminLogin = handleAdminLogin;
         window.addNewItem = addNewItem;
         window.changeItemCount = changeItemCount;
         window.deleteItem = deleteItem;
